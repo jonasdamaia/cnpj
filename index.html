@@ -5,78 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Consulta CNPJ</title>
 <style>
-:root{--bg:#eef2ef;--sf:#fff;--ink:#12272b;--mut:#5b6f72;--ln:#d4ddd9;--ac:#0b6e4f;--acf:#fff;--ok:#0b6e4f;--okb:#d9f0e6;--bad:#a4262c;--badb:#fbe0e0;--wn:#8a5a00;--wnb:#fdf0cf;--sk:#e1e8e4;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1819;--sf:#16252a;--ink:#e6efec;--mut:#92a8ab;--ln:#2a3d42;--ac:#49c79a;--acf:#06201a;--ok:#6fe0b6;--okb:#12382d;--bad:#ff9ea1;--badb:#3d1a1d;--wn:#f2c66b;--wnb:#3b2f10;--sk:#1f3338;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e1819;--sf:#16252a;--ink:#e6efec;--mut:#92a8ab;--ln:#2a3d42;--ac:#49c79a;--acf:#06201a;--ok:#6fe0b6;--okb:#12382d;--bad:#ff9ea1;--badb:#3d1a1d;--wn:#f2c66b;--wnb:#3b2f10;--sk:#1f3338;color-scheme:dark}
+:root{--bg:#060c10;--panel:#0b151c;--sf:#0f1c25;--ink:#e8f1ee;--mut:#7f949a;--ln:#1c2f38;--pb:#14503f;--ac:#10b981;--acf:#04150f;--ok:#34d399;--okb:#0f3a2d;--bad:#ff9ea1;--badb:#3d1a1d;--wn:#f2c66b;--wnb:#3b2f10;--bl:#7db3ff;--blb:#14294a;--sk:#1a2d36;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+:root[data-theme="light"]{--bg:#e8efec;--panel:#fff;--sf:#f4f8f6;--ink:#10262a;--mut:#5a6f73;--ln:#d3ddd9;--pb:#b9d9cb;--ac:#0b7a56;--acf:#fff;--ok:#0b7a56;--okb:#d9f0e6;--bad:#a4262c;--badb:#fbe0e0;--wn:#8a5a00;--wnb:#fdf0cf;--bl:#1d4ed8;--blb:#dde8ff;--sk:#e1e8e4;color-scheme:light}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px 48px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:28px}
-h1{font:700 1.6rem/1.2 Georgia,"Times New Roman",serif;margin:0;letter-spacing:-.01em}
-.sub{color:var(--mut);margin:4px 0 0;font-size:.95rem}
-button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);padding:9px 14px;min-height:44px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{padding:18px 14px 40px}
+.app{position:relative;max-width:1080px;margin:0 auto;background:var(--panel);border:1px solid var(--pb);border-radius:22px;padding:36px 22px 26px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);padding:8px 14px;min-height:40px}
 button:hover{border-color:var(--ac)}
-button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
-.pri{background:var(--ac);color:var(--acf);border-color:var(--ac);font-weight:600}
+button:focus-visible,a:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.cfg{position:absolute;top:12px;right:12px;z-index:5}
+.tm{min-height:40px;min-width:40px;padding:6px;display:grid;place-items:center}
+.menu{position:absolute;right:0;top:46px;min-width:230px;background:var(--sf);border:1px solid var(--pb);border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.menu[hidden]{display:none}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;border-radius:8px}
+.menu button:hover:not(:disabled){background:var(--okb)}
+.menu button:disabled{opacity:.45;cursor:not-allowed}
+.menu hr{border:0;border-top:1px solid var(--ln);margin:6px 0}
+.hd{text-align:center;margin-bottom:18px}
+.hd small{color:var(--ac);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase}
+.hd h1{font-size:1.35rem;margin:8px 0 0;line-height:1.3}
+.sbox{display:flex;align-items:stretch;max-width:640px;margin:0 auto;background:var(--bg);border:1px solid var(--pb);border-radius:14px;overflow:hidden}
+.sbox:focus-within{outline:3px solid var(--ac);outline-offset:2px}
+.sbox:has(input[aria-invalid="true"]){border-color:var(--bad)}
+.sbox svg{align-self:center;margin-left:16px;color:var(--mut);flex:none}
+.sbox input{flex:1 1 auto;min-width:0;min-height:56px;border:0;outline:0;background:transparent;color:var(--ink);font:600 1rem ui-monospace,Consolas,monospace;letter-spacing:.04em;padding:0 14px}
+.pri{background:var(--ac);color:var(--acf);border-color:var(--ac);font-weight:700}
 .pri:disabled{opacity:.6;cursor:wait}
-form{display:flex;gap:10px;flex-wrap:wrap}
-input{flex:1 1 240px;min-height:52px;font:600 1.15rem/1 ui-monospace,Consolas,monospace;letter-spacing:.04em;padding:0 16px;border-radius:10px;border:2px solid var(--ln);background:var(--sf);color:var(--ink)}
-input[aria-invalid="true"]{border-color:var(--bad)}
-.hint{color:var(--mut);font-size:.88rem;margin:8px 2px 0}
-#res{margin-top:28px}
-.hero{background:var(--ac);color:var(--acf);border-radius:14px;padding:22px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:flex-start}
-.hero h2{font:700 1.5rem/1.2 Georgia,serif;margin:0 0 4px;overflow-wrap:anywhere}
-.hero p{margin:0;opacity:.9}
-.hero .cn{font:600 1.05rem ui-monospace,Consolas,monospace;margin-top:8px}
-.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:.9rem;background:var(--okb);color:var(--ok)}
-.badge.bad{background:var(--badb);color:var(--bad)}.badge.wn{background:var(--wnb);color:var(--wn)}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px}
-.card{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:18px}
+.sbox button{border-radius:0;border:0;padding:0 22px;line-height:1.25}
+.hint{text-align:center;color:var(--mut);font-size:.82rem;margin:10px 0 0}
+#res{margin-top:26px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px}
 .card.full{grid-column:1/-1}
-.card h3{margin:0 0 12px;font-size:1.05rem}
+.card h3{display:flex;justify-content:space-between;gap:8px;margin:0 0 12px;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.card h3 .tag{font-weight:500;text-transform:none}
+.top{padding:22px;background:var(--panel);border-color:var(--pb)}
+.meta{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.meta small,.fan{color:var(--mut)}
+.chip,.code{font:700 .78rem ui-monospace,Consolas,monospace;color:var(--ok);background:var(--okb);border-radius:6px;padding:2px 8px}
+.rowh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px}
+.rowh h2{margin:0;font-size:1.5rem;line-height:1.2;overflow-wrap:anywhere}
+.fan{margin:4px 0 0}
+.badges,.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badges button{min-height:34px;padding:4px 12px;font-size:.85rem}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-weight:700;font-size:.8rem;background:var(--okb);color:var(--ok)}
+.badge::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.badge.bad{background:var(--badb);color:var(--bad)}.badge.wn{background:var(--wnb);color:var(--wn)}
+.nj{padding:4px 12px;border-radius:99px;font-size:.8rem;font-weight:600;background:var(--blb);color:var(--bl)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--ln)}
+.tile{background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:12px 14px}
+.tile small{display:block;color:var(--mut);font-size:.78rem}.tile strong{font-size:.95rem;overflow-wrap:anywhere}
+.tri,.stack,.grid{display:grid;gap:14px;margin-top:14px}
+.tri{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr))}
+.grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));margin-top:0}
+.tri .card{display:flex;flex-direction:column;font-size:.9rem}
+.foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--ln);display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem}
+.lnk{background:none;border:0;min-height:0;padding:0;color:var(--ac);font:inherit;text-decoration:none}
+.lnk:hover{text-decoration:underline}
+.sc{display:flex;justify-content:space-between;gap:10px;background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:.88rem}
+.sc span{color:var(--mut);font-size:.78rem;text-align:right}
 dl{margin:0;display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:8px 14px}
 dt{color:var(--mut);font-size:.9rem}dd{margin:0;overflow-wrap:anywhere}
 a{color:var(--ac)}
-table{width:100%;border-collapse:collapse;font-size:.93rem}
 .scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--ln);vertical-align:top}
 th{color:var(--mut);font-weight:600}
-.err{background:var(--badb);color:var(--bad);border-radius:12px;padding:18px}
-.err strong{display:block;margin-bottom:4px}.err button{margin-top:10px}
+details.sec{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:0 18px}
+details.sec summary{cursor:pointer;min-height:52px;display:flex;align-items:center;font-weight:600;list-style:none}
+details.sec summary::-webkit-details-marker,details.acc summary::-webkit-details-marker{display:none}
+details.sec summary::after{content:"\25be";margin-left:auto;color:var(--ac)}
+details.sec[open] summary::after{content:"\25b4"}
+details.sec .scroll{padding-bottom:14px}
 .rg{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid var(--ln)}.rg strong{min-width:48px}
 details.acc summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;list-style:none}
-details.acc summary::-webkit-details-marker{display:none}
-.mais{color:var(--ac);font-size:.9rem;white-space:nowrap}.mais::after{content:" ▾"}details[open] .mais::after{content:" ▴"}
+.mais{color:var(--ac);font-size:.9rem;white-space:nowrap}.mais::after{content:" \25be"}details[open] .mais::after{content:" \25b4"}
+.err{background:var(--badb);color:var(--bad);border-radius:12px;padding:18px}
+.err strong{display:block;margin-bottom:4px}.err button{margin-top:10px}
 .sk{background:var(--sk);border-radius:8px;height:14px;margin:10px 0;animation:p 1.2s ease-in-out infinite}
 @keyframes p{50%{opacity:.45}}
 @media (prefers-reduced-motion:reduce){.sk{animation:none}}
-@media (max-width:520px){dl{grid-template-columns:1fr;gap:2px}dt{margin-top:8px}.hero{padding:16px}}
-@media print{.noprint{display:none!important}body{background:#fff;color:#000}.card,.hero{break-inside:avoid}}
+@media (max-width:520px){.app{padding:44px 14px 18px}dl{grid-template-columns:1fr;gap:2px}dt{margin-top:8px}.sbox{flex-wrap:wrap}.sbox input{flex:1 1 calc(100% - 50px)}.sbox button{flex:1 1 100%;min-height:48px}.rowh h2{font-size:1.25rem}}
+@media print{:root,:root[data-theme]{--bg:#fff;--panel:#fff;--sf:#fff;--ink:#000;--mut:#444;--ln:#bbb;--pb:#bbb;--ac:#065f46;--ok:#065f46;--okb:#e5f4ee}.noprint{display:none!important}.app{border:0}.card,.top{break-inside:avoid}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="noprint">
-<div><h1>Consulta CNPJ</h1><p class="sub">Dados cadastrais de empresas, direto da Receita Federal via BrasilAPI.</p></div>
-<button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
-</header>
-<form id="f" class="noprint" novalidate>
+<div class="wrap"><div class="app">
+<div class="cfg noprint"><button id="cfg" class="tm" type="button" aria-label="Configurações e ações" aria-haspopup="menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+<div id="menu" class="menu" role="menu" hidden>
+<button type="button" role="menuitem" id="tema">Tema</button>
+<hr>
+<button type="button" role="menuitem" id="cp">Copiar dossiê</button>
+<button type="button" role="menuitem" id="js">Exportar JSON</button>
+<button type="button" role="menuitem" id="pr">Imprimir</button>
+</div></div>
+<div class="hd noprint"><small> </small><h1>LUPA CNPJ</h1></div>
+<form id="f" class="sbox noprint" novalidate>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 21v-4h6v4"/></svg>
 <input id="q" inputmode="numeric" autocomplete="off" placeholder="00.000.000/0000-00" aria-label="CNPJ" aria-describedby="h">
-<button id="go" class="pri" type="submit">Consultar CNPJ</button>
+<button id="go" class="pri" type="submit">Consultar</button>
 </form>
-<p class="hint noprint" id="h">Digite ou cole o CNPJ com ou sem pontuação.</p>
+<p class="hint noprint" id="h"> </p>
 <main id="res" aria-live="polite"></main>
-</div>
+</div></div>
 <script>
 const $=s=>document.querySelector(s),res=$("#res"),q=$("#q"),go=$("#go");
 let dados=null,ultimo="";
 // Tema
 const root=document.documentElement;
 try{const t=localStorage.getItem("tema");if(t)root.dataset.theme=t}catch(e){}
-$("#tema").onclick=()=>{const esc=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;const n=esc?"light":"dark";root.dataset.theme=n;try{localStorage.setItem("tema",n)}catch(e){}};
+const menu=$("#menu"),cfg=$("#cfg");
+const rot=()=>{$("#tema").textContent=root.dataset.theme==="light"?"Tema: mudar para escuro":"Tema: mudar para claro"};rot();
+const fechar=()=>{menu.hidden=true;cfg.setAttribute("aria-expanded","false")};
+cfg.onclick=e=>{e.stopPropagation();const abrir=menu.hidden;["cp","js","pr"].forEach(i=>{const b=$("#"+i);b.disabled=!dados;b.title=dados?"":"Faça uma consulta primeiro"});menu.hidden=!abrir;cfg.setAttribute("aria-expanded",String(abrir))};
+document.addEventListener("click",e=>{if(!menu.contains(e.target))fechar()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!menu.hidden){fechar();cfg.focus()}});
+$("#tema").onclick=()=>{const n=root.dataset.theme==="light"?"dark":"light";root.dataset.theme=n;try{localStorage.setItem("tema",n)}catch(e){}rot()};
+$("#cp").onclick=()=>{if(dados)copiar()};
+$("#js").onclick=()=>{if(dados){exportar();fechar()}};
+$("#pr").onclick=()=>{if(dados){fechar();print()}};
 // Utilitários
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const vazio=v=>v===null||v===undefined||v===""||(Array.isArray(v)&&!v.length);
@@ -100,31 +148,59 @@ function valida(c){
 function skeleton(){res.innerHTML='<div class="grid" aria-busy="true">'+[1,2,3,4].map(()=>'<div class="card"><div class="sk" style="width:40%;height:18px"></div><div class="sk"></div><div class="sk" style="width:85%"></div><div class="sk" style="width:60%"></div></div>').join("")+"</div>"}
 function erro(t,m,retry){res.innerHTML=`<div class="err" role="alert"><strong>${esc(t)}</strong>${esc(m)}${retry?'<br><button type="button" id="tent">Tentar novamente</button>':""}</div>`;const b=$("#tent");if(b)b.onclick=()=>consultar(ultimo)}
 function badge(s){const x=String(s||"").toUpperCase();const c=x==="ATIVA"?"":x==="SUSPENSA"||x==="INAPTA"?"wn":"bad";return`<span class="badge ${c}">${esc(s||"Não informada")}</span>`}
+const fCnae=c=>String(c||"").padStart(7,"0").replace(/^(\d{2})(\d{2})(\d)(\d{2})$/,"$1.$2-$3/$4");
 function mostrar(d){
   const end=[d.descricao_tipo_de_logradouro,d.logradouro,d.numero,d.complemento].filter(Boolean).join(", ");
-  const loc=[d.bairro,[d.municipio,d.uf].filter(Boolean).join("/"),d.cep?"CEP "+fCep(d.cep):""].filter(Boolean).join(" · ");
+  const l1=[end,d.bairro].filter(Boolean).join(", ");
+  const l2=[d.municipio,d.uf].filter(Boolean).join(" - ")+(d.cep?", CEP: "+fCep(d.cep):"");
   const mapa="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([end,d.bairro,d.municipio,d.uf,d.cep].filter(Boolean).join(", "));
-  const tels=[d.ddd_telefone_1,d.ddd_telefone_2].filter(Boolean).map(t=>`<a href="tel:+55${String(t).replace(/\D/g,"")}">${esc(fTel(t))}</a>`).join("<br>");
+  const tels=[d.ddd_telefone_1,d.ddd_telefone_2].filter(Boolean).map(t=>`<a href="tel:+55${String(t).replace(/\D/g,"")}">${esc(fTel(t))}</a>`).join(" · ");
   const fax=d.ddd_fax?esc(fTel(d.ddd_fax)):"";
   const mail=d.email?`<a href="mailto:${esc(d.email)}">${esc(d.email.toLowerCase())}</a>`:"";
+  const sec=(d.cnaes_secundarios||[]).filter(c=>c.codigo&&c.codigo!==0);
+  const soc=d.qsa||[];
   const rt=(Array.isArray(d.regime_tributario)?[...d.regime_tributario]:[]).sort((a,b)=>b.ano-a.ano);
+  const regAtual=rt.length?String(rt[0].forma_de_tributacao||""):d.opcao_pelo_mei===true?"MEI":d.opcao_pelo_simples===true?"Simples Nacional":"";
+  const regTab=rt.length?'<div class="scroll"><table><thead><tr><th>Ano</th><th>Regime</th></tr></thead><tbody>'+rt.map(r=>`<tr><td>${esc(r.ano)}</td><td>${esc(r.forma_de_tributacao)}</td></tr>`).join("")+"</tbody></table></div>":"";
   const linha=r=>`<strong>${esc(r.ano)}</strong><span>${esc(r.forma_de_tributacao)}</span>`;
   const reg=!rt.length?"":rt.length===1?`<div class="rg">${linha(rt[0])}</div>`:`<details class="acc"><summary><span class="rg" style="border:0;padding:0">${linha(rt[0])}</span><span class="mais">Ver anteriores (${rt.length-1})</span></summary>${rt.slice(1).map(r=>`<div class="rg">${linha(r)}</div>`).join("")}</details>`;
-  const sec=(d.cnaes_secundarios||[]).filter(c=>c.codigo&&c.codigo!==0);
-  const cnae='<dl>'+row("Principal",d.cnae_fiscal?`<strong>${esc(d.cnae_fiscal)}</strong> · ${esc(d.cnae_fiscal_descricao||"")}`:"")+"</dl>"+(sec.length?`<h4 style="margin:16px 0 8px;font-size:.95rem">Secundárias (${sec.length})</h4><div class="scroll"><table><thead><tr><th>Código</th><th>Descrição</th></tr></thead><tbody>`+sec.map(c=>`<tr><td>${esc(c.codigo)}</td><td>${esc(c.descricao||"")}</td></tr>`).join("")+"</tbody></table></div>":"");
-  const qsa=(d.qsa||[]).length?'<div class="scroll"><table><thead><tr><th>Nome</th><th>Qualificação</th><th>Entrada</th><th>Faixa etária</th></tr></thead><tbody>'+d.qsa.map(s=>`<tr><td>${esc(s.nome_socio||"")}</td><td>${esc(s.qualificacao_socio||"")}</td><td>${esc(fData(s.data_entrada_sociedade))}</td><td>${esc(s.faixa_etaria||"")}</td></tr>`).join("")+"</tbody></table></div>":"";
+  const tile=(k,v)=>`<div class="tile"><small>${k}</small><strong>${v||"—"}</strong></div>`;
+  const simples=d.opcao_pelo_simples===true?"Optante":d.opcao_pelo_simples===false?"Não Optante":"";
+  const secTab=sec.length?'<div class="scroll"><table><thead><tr><th>Código</th><th>Descrição</th></tr></thead><tbody>'+sec.map(c=>`<tr><td>${esc(fCnae(c.codigo))}</td><td>${esc(c.descricao||"")}</td></tr>`).join("")+"</tbody></table></div>":"";
+  const qsaTab=soc.length?'<div class="scroll"><table><thead><tr><th>Nome</th><th>Qualificação</th><th>Entrada</th><th>Faixa etária</th></tr></thead><tbody>'+soc.map(x=>`<tr><td>${esc(x.nome_socio||"")}</td><td>${esc(x.qualificacao_socio||"")}</td><td>${esc(fData(x.data_entrada_sociedade))}</td><td>${esc(x.faixa_etaria||"")}</td></tr>`).join("")+"</tbody></table></div>":"";
+  const comp='<dl>'+row("Situação desde",fData(d.data_situacao_cadastral))+row("Motivo da situação",esc(d.descricao_motivo_situacao_cadastral||""))+row("Situação especial",esc(d.situacao_especial||""))+row("Ente federativo",esc(d.ente_federativo_responsavel||""))+row("Optante pelo Simples",simples)+row("Simples Nacional desde",fData(d.data_opcao_pelo_simples))+row("Excluída do Simples",fData(d.data_exclusao_do_simples))+row("Optante pelo MEI",sim(d.opcao_pelo_mei))+"</dl>";
   res.innerHTML=`
-  <div class="hero"><div><h2>${esc(d.razao_social||"Razão social não informada")}</h2>${d.nome_fantasia?`<p>${esc(d.nome_fantasia)}</p>`:""}<div class="cn">${fCnpj(d.cnpj)}</div></div><div>${badge(d.descricao_situacao_cadastral)}</div></div>
-  <div class="tools noprint"><button type="button" id="cp">Copiar dados</button><button type="button" id="js">Exportar JSON</button><button type="button" id="pr">Imprimir</button></div>
-  <div class="grid">
-  ${card("Dados cadastrais",'<dl>'+row("Tipo",esc(d.descricao_identificador_matriz_filial||""))+row("Abertura",fData(d.data_inicio_atividade))+row("Natureza jurídica",esc(d.natureza_juridica||""))+row("Porte",esc(d.descricao_porte||d.porte||""))+row("Capital social",d.capital_social!=null?fMoeda(d.capital_social):"")+row("Situação desde",fData(d.data_situacao_cadastral))+row("Motivo da situação",esc(d.descricao_motivo_situacao_cadastral||""))+row("Situação especial",esc(d.situacao_especial||""))+row("Ente federativo",esc(d.ente_federativo_responsavel||""))+row("Optante pelo Simples",sim(d.opcao_pelo_simples)+(d.data_opcao_pelo_simples?" desde "+fData(d.data_opcao_pelo_simples):""))+row("Excluída do Simples",fData(d.data_exclusao_do_simples))+row("Optante pelo MEI",sim(d.opcao_pelo_mei))+"</dl>")}
-  ${card("Endereço",`<dl>${row("Logradouro",esc(end))}${row("Localidade",esc(loc))}</dl><p class="noprint"><a href="${mapa}" target="_blank" rel="noopener">Abrir no Google Maps</a></p>`)}
-  ${card("Contato",'<dl>'+row("Telefones",tels)+row("Fax",fax)+row("E-mail",mail)+"</dl>")}
-  ${card("Atividades econômicas (CNAE)",cnae,true)}
-  ${card("Quadro societário",qsa,true)}
-  ${card("Regime tributário",reg,true)}
+  <section class="card top">
+    <div class="meta"><span class="chip">${fCnpj(d.cnpj)}</span>${d.descricao_identificador_matriz_filial?`<small>• ${esc(d.descricao_identificador_matriz_filial)}</small>`:""}</div>
+    <div class="rowh"><div><h2>${esc(d.razao_social||"Razão social não informada")}</h2>${d.nome_fantasia?`<p class="fan">${esc(d.nome_fantasia)}</p>`:""}</div>
+    <div class="badges">${badge(d.descricao_situacao_cadastral)}${d.natureza_juridica?`<span class="nj">${esc(d.natureza_juridica)}</span>`:""}</div></div>
+    <div class="stats">${tile("Data de abertura",fData(d.data_inicio_atividade))}${tile("Porte da empresa",esc(d.descricao_porte||d.porte||""))}${tile("Capital social",d.capital_social!=null?fMoeda(d.capital_social):"")}${tile("Regime Tributário Atual",esc(regAtual))}</div>
+  </section>
+  <div class="tri">
+    <section class="card"><h3>Localização &amp; contato<span class="tag">${esc([d.uf,d.municipio].filter(Boolean).join(" / "))}</span></h3>
+      <p style="margin:0 0 10px">${esc(l1)}<br>${esc(l2)}</p>
+      ${tels||fax?`<p style="margin:0 0 10px">${tels}${fax?(tels?"<br>":"")+"Fax: "+fax:""}</p>`:""}
+      <p class="noprint" style="margin:0 0 10px"><a href="${mapa}" target="_blank" rel="noopener">Abrir no Google Maps</a></p>
+      ${mail?`<div class="foot"><span>${mail}</span><button type="button" class="lnk noprint" id="cm">Copiar</button></div>`:""}
+    </section>
+    <section class="card"><h3>Atividade principal${d.cnae_fiscal?`<span class="code">${esc(fCnae(d.cnae_fiscal))}</span>`:""}</h3>
+      <p style="margin:0 0 12px">${esc(d.cnae_fiscal_descricao||"Não informada")}</p>
+      <div class="foot"><span style="color:var(--mut)">Atividades secundárias</span>${sec.length?`<button type="button" class="lnk" data-open="d-cnae">${sec.length} cadastradas</button>`:"<span>Nenhuma</span>"}</div>
+    </section>
+    <section class="card"><h3>Quadro societário<span class="tag">${soc.length} ${soc.length===1?"sócio":"sócios"}</span></h3>
+      ${soc.slice(0,3).map(x=>`<div class="sc"><b>${esc(x.nome_socio||"")}</b><span>${esc(x.qualificacao_socio||"")}</span></div>`).join("")||'<p style="margin:0;color:var(--mut)">Sem sócios informados.</p>'}
+      ${soc.length?`<div class="foot" style="justify-content:flex-end"><button type="button" class="lnk" data-open="d-qsa">Ver QSA completo →</button></div>`:""}
+    </section>
+  </div>
+  <div class="stack">
+    ${comp.length>10&&/<dt>/.test(comp)?card("Dados cadastrais complementares",comp):""}
+    ${sec.length?`<details class="sec" id="d-cnae"><summary>Atividades secundárias (${sec.length})</summary>${secTab}</details>`:""}
+    ${soc.length?`<details class="sec" id="d-qsa"><summary>Quadro societário completo (${soc.length})</summary>${qsaTab}</details>`:""}
+    ${rt.length?`<details class="sec" id="d-reg"><summary>Regime tributário (${rt.length})</summary>${regTab}</details>`:""}
   </div>`;
-  $("#cp").onclick=copiar;$("#js").onclick=exportar;$("#pr").onclick=()=>print();
+  
+  res.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const t=document.getElementById(b.dataset.open);t.open=true;t.scrollIntoView({block:"start"})});
+  const cm=$("#cm");if(cm)cm.onclick=async()=>{try{await navigator.clipboard.writeText(d.email);cm.textContent="Copiado"}catch(e){cm.textContent="Não copiou"}setTimeout(()=>cm.textContent="Copiar",2000)};
 }
 function texto(d){
   const L=[`${d.razao_social} (${fCnpj(d.cnpj)})`,`Situação: ${d.descricao_situacao_cadastral}`];
@@ -137,9 +213,9 @@ function texto(d){
   (d.qsa||[]).forEach(s=>L.push("Sócio: "+s.nome_socio+" ("+s.qualificacao_socio+")"));
   return L.join("\n");
 }
-async function copiar(){const b=$("#cp");try{await navigator.clipboard.writeText(texto(dados));b.textContent="Dados copiados"}catch(e){b.textContent="Não foi possível copiar"}setTimeout(()=>b.textContent="Copiar dados",2000)}
+async function copiar(){const b=$("#cp");try{await navigator.clipboard.writeText(texto(dados));b.textContent="Dados copiados"}catch(e){b.textContent="Não foi possível copiar"}setTimeout(()=>b.textContent="Copiar dossiê",2000)}
 function exportar(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(dados,null,2)],{type:"application/json"}));a.download="cnpj-"+dados.cnpj+".json";document.body.appendChild(a);a.click();a.remove()}
-addEventListener("beforeprint",()=>document.querySelectorAll("details.acc").forEach(x=>x.open=true));
+addEventListener("beforeprint",()=>document.querySelectorAll("details").forEach(x=>x.open=true));
 // Consulta
 async function consultar(c){
   ultimo=c;go.disabled=true;skeleton();dados=null;
