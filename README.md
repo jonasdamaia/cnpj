@@ -2,7 +2,7 @@
 
 Aplicação web para consultar os dados cadastrais de uma empresa a partir do CNPJ. Você digita o número e a página mostra o dossiê completo, organizado em cards, usando a [BrasilAPI](https://brasilapi.com.br/).
 
-**Demonstração:** https://jonasdamaia.github.io/cnpj/
+**[Teste aqui](https://jonasdamaia.github.io/cnpj/)**
 
 ## Funcionalidades
 
