@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Consulta CNPJ</title>
+<style>
+:root{--bg:#eef2ef;--sf:#fff;--ink:#12272b;--mut:#5b6f72;--ln:#d4ddd9;--ac:#0b6e4f;--acf:#fff;--ok:#0b6e4f;--okb:#d9f0e6;--bad:#a4262c;--badb:#fbe0e0;--wn:#8a5a00;--wnb:#fdf0cf;--sk:#e1e8e4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1819;--sf:#16252a;--ink:#e6efec;--mut:#92a8ab;--ln:#2a3d42;--ac:#49c79a;--acf:#06201a;--ok:#6fe0b6;--okb:#12382d;--bad:#ff9ea1;--badb:#3d1a1d;--wn:#f2c66b;--wnb:#3b2f10;--sk:#1f3338;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1819;--sf:#16252a;--ink:#e6efec;--mut:#92a8ab;--ln:#2a3d42;--ac:#49c79a;--acf:#06201a;--ok:#6fe0b6;--okb:#12382d;--bad:#ff9ea1;--badb:#3d1a1d;--wn:#f2c66b;--wnb:#3b2f10;--sk:#1f3338;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:28px}
+h1{font:700 1.6rem/1.2 Georgia,"Times New Roman",serif;margin:0;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:4px 0 0;font-size:.95rem}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--ln);background:var(--sf);color:var(--ink);padding:9px 14px;min-height:44px}
+button:hover{border-color:var(--ac)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.pri{background:var(--ac);color:var(--acf);border-color:var(--ac);font-weight:600}
+.pri:disabled{opacity:.6;cursor:wait}
+form{display:flex;gap:10px;flex-wrap:wrap}
+input{flex:1 1 240px;min-height:52px;font:600 1.15rem/1 ui-monospace,Consolas,monospace;letter-spacing:.04em;padding:0 16px;border-radius:10px;border:2px solid var(--ln);background:var(--sf);color:var(--ink)}
+input[aria-invalid="true"]{border-color:var(--bad)}
+.hint{color:var(--mut);font-size:.88rem;margin:8px 2px 0}
+#res{margin-top:28px}
+.hero{background:var(--ac);color:var(--acf);border-radius:14px;padding:22px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:flex-start}
+.hero h2{font:700 1.5rem/1.2 Georgia,serif;margin:0 0 4px;overflow-wrap:anywhere}
+.hero p{margin:0;opacity:.9}
+.hero .cn{font:600 1.05rem ui-monospace,Consolas,monospace;margin-top:8px}
+.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:.9rem;background:var(--okb);color:var(--ok)}
+.badge.bad{background:var(--badb);color:var(--bad)}.badge.wn{background:var(--wnb);color:var(--wn)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:18px}
+.card.full{grid-column:1/-1}
+.card h3{margin:0 0 12px;font-size:1.05rem}
+dl{margin:0;display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:8px 14px}
+dt{color:var(--mut);font-size:.9rem}dd{margin:0;overflow-wrap:anywhere}
+a{color:var(--ac)}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+.scroll{overflow-x:auto}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--ln);vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.err{background:var(--badb);color:var(--bad);border-radius:12px;padding:18px}
+.err strong{display:block;margin-bottom:4px}.err button{margin-top:10px}
+.rg{display:flex;gap:14px;padding:8px 0;border-bottom:1px solid var(--ln)}.rg strong{min-width:48px}
+details.acc summary{cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px;list-style:none}
+details.acc summary::-webkit-details-marker{display:none}
+.mais{color:var(--ac);font-size:.9rem;white-space:nowrap}.mais::after{content:" ▾"}details[open] .mais::after{content:" ▴"}
+.sk{background:var(--sk);border-radius:8px;height:14px;margin:10px 0;animation:p 1.2s ease-in-out infinite}
+@keyframes p{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+@media (max-width:520px){dl{grid-template-columns:1fr;gap:2px}dt{margin-top:8px}.hero{padding:16px}}
+@media print{.noprint{display:none!important}body{background:#fff;color:#000}.card,.hero{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="noprint">
+<div><h1>Consulta CNPJ</h1><p class="sub">Dados cadastrais de empresas, direto da Receita Federal via BrasilAPI.</p></div>
+<button id="tema" type="button" aria-label="Alternar tema claro e escuro">Tema</button>
+</header>
+<form id="f" class="noprint" novalidate>
+<input id="q" inputmode="numeric" autocomplete="off" placeholder="00.000.000/0000-00" aria-label="CNPJ" aria-describedby="h">
+<button id="go" class="pri" type="submit">Consultar CNPJ</button>
+</form>
+<p class="hint noprint" id="h">Digite ou cole o CNPJ com ou sem pontuação.</p>
+<main id="res" aria-live="polite"></main>
+</div>
+<script>
+const $=s=>document.querySelector(s),res=$("#res"),q=$("#q"),go=$("#go");
+let dados=null,ultimo="";
+// Tema
+const root=document.documentElement;
+try{const t=localStorage.getItem("tema");if(t)root.dataset.theme=t}catch(e){}
+$("#tema").onclick=()=>{const esc=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;const n=esc?"light":"dark";root.dataset.theme=n;try{localStorage.setItem("tema",n)}catch(e){}};
+// Utilitários
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const vazio=v=>v===null||v===undefined||v===""||(Array.isArray(v)&&!v.length);
+const fCnpj=c=>String(c).padStart(14,"0").replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,"$1.$2.$3/$4-$5");
+const fCep=c=>String(c).padStart(8,"0").replace(/^(\d{5})(\d{3})$/,"$1-$2");
+const fData=d=>{if(!d)return"";const m=String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:d};
+const fMoeda=n=>Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const fTel=t=>{const d=String(t||"").replace(/\D/g,"");if(d.length===11)return d.replace(/^(\d{2})(\d{5})(\d{4})$/,"($1) $2-$3");if(d.length===10)return d.replace(/^(\d{2})(\d{4})(\d{4})$/,"($1) $2-$3");return t};
+const sim=b=>b===true?"Sim":b===false?"Não":"";
+const row=(k,v)=>vazio(v)?"":`<dt>${k}</dt><dd>${v}</dd>`;
+const card=(t,body,full)=>body?`<section class="card${full?" full":""}"><h3>${t}</h3>${body}</section>`:"";
+// Validação oficial dos dígitos verificadores
+function valida(c){
+  if(c.length!==14)return"O CNPJ precisa ter 14 dígitos. Confira o número digitado.";
+  if(/^(\d)\1+$/.test(c))return"CNPJ inválido: todos os dígitos são iguais.";
+  const dv=n=>{let p=n-7,s=0;for(let i=0;i<n;i++){s+=+c[i]*p--;if(p<2)p=9}const r=s%11;return r<2?0:11-r};
+  if(dv(12)!==+c[12]||dv(13)!==+c[13])return"CNPJ inválido: os dígitos verificadores não conferem.";
+  return"";
+}
+// Telas
+function skeleton(){res.innerHTML='<div class="grid" aria-busy="true">'+[1,2,3,4].map(()=>'<div class="card"><div class="sk" style="width:40%;height:18px"></div><div class="sk"></div><div class="sk" style="width:85%"></div><div class="sk" style="width:60%"></div></div>').join("")+"</div>"}
+function erro(t,m,retry){res.innerHTML=`<div class="err" role="alert"><strong>${esc(t)}</strong>${esc(m)}${retry?'<br><button type="button" id="tent">Tentar novamente</button>':""}</div>`;const b=$("#tent");if(b)b.onclick=()=>consultar(ultimo)}
+function badge(s){const x=String(s||"").toUpperCase();const c=x==="ATIVA"?"":x==="SUSPENSA"||x==="INAPTA"?"wn":"bad";return`<span class="badge ${c}">${esc(s||"Não informada")}</span>`}
+function mostrar(d){
+  const end=[d.descricao_tipo_de_logradouro,d.logradouro,d.numero,d.complemento].filter(Boolean).join(", ");
+  const loc=[d.bairro,[d.municipio,d.uf].filter(Boolean).join("/"),d.cep?"CEP "+fCep(d.cep):""].filter(Boolean).join(" · ");
+  const mapa="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([end,d.bairro,d.municipio,d.uf,d.cep].filter(Boolean).join(", "));
+  const tels=[d.ddd_telefone_1,d.ddd_telefone_2].filter(Boolean).map(t=>`<a href="tel:+55${String(t).replace(/\D/g,"")}">${esc(fTel(t))}</a>`).join("<br>");
+  const fax=d.ddd_fax?esc(fTel(d.ddd_fax)):"";
+  const mail=d.email?`<a href="mailto:${esc(d.email)}">${esc(d.email.toLowerCase())}</a>`:"";
+  const rt=(Array.isArray(d.regime_tributario)?[...d.regime_tributario]:[]).sort((a,b)=>b.ano-a.ano);
+  const linha=r=>`<strong>${esc(r.ano)}</strong><span>${esc(r.forma_de_tributacao)}</span>`;
+  const reg=!rt.length?"":rt.length===1?`<div class="rg">${linha(rt[0])}</div>`:`<details class="acc"><summary><span class="rg" style="border:0;padding:0">${linha(rt[0])}</span><span class="mais">Ver anteriores (${rt.length-1})</span></summary>${rt.slice(1).map(r=>`<div class="rg">${linha(r)}</div>`).join("")}</details>`;
+  const sec=(d.cnaes_secundarios||[]).filter(c=>c.codigo&&c.codigo!==0);
+  const cnae='<dl>'+row("Principal",d.cnae_fiscal?`<strong>${esc(d.cnae_fiscal)}</strong> · ${esc(d.cnae_fiscal_descricao||"")}`:"")+"</dl>"+(sec.length?`<h4 style="margin:16px 0 8px;font-size:.95rem">Secundárias (${sec.length})</h4><div class="scroll"><table><thead><tr><th>Código</th><th>Descrição</th></tr></thead><tbody>`+sec.map(c=>`<tr><td>${esc(c.codigo)}</td><td>${esc(c.descricao||"")}</td></tr>`).join("")+"</tbody></table></div>":"");
+  const qsa=(d.qsa||[]).length?'<div class="scroll"><table><thead><tr><th>Nome</th><th>Qualificação</th><th>Entrada</th><th>Faixa etária</th></tr></thead><tbody>'+d.qsa.map(s=>`<tr><td>${esc(s.nome_socio||"")}</td><td>${esc(s.qualificacao_socio||"")}</td><td>${esc(fData(s.data_entrada_sociedade))}</td><td>${esc(s.faixa_etaria||"")}</td></tr>`).join("")+"</tbody></table></div>":"";
+  res.innerHTML=`
+  <div class="hero"><div><h2>${esc(d.razao_social||"Razão social não informada")}</h2>${d.nome_fantasia?`<p>${esc(d.nome_fantasia)}</p>`:""}<div class="cn">${fCnpj(d.cnpj)}</div></div><div>${badge(d.descricao_situacao_cadastral)}</div></div>
+  <div class="tools noprint"><button type="button" id="cp">Copiar dados</button><button type="button" id="js">Exportar JSON</button><button type="button" id="pr">Imprimir</button></div>
+  <div class="grid">
+  ${card("Dados cadastrais",'<dl>'+row("Tipo",esc(d.descricao_identificador_matriz_filial||""))+row("Abertura",fData(d.data_inicio_atividade))+row("Natureza jurídica",esc(d.natureza_juridica||""))+row("Porte",esc(d.descricao_porte||d.porte||""))+row("Capital social",d.capital_social!=null?fMoeda(d.capital_social):"")+row("Situação desde",fData(d.data_situacao_cadastral))+row("Motivo da situação",esc(d.descricao_motivo_situacao_cadastral||""))+row("Situação especial",esc(d.situacao_especial||""))+row("Ente federativo",esc(d.ente_federativo_responsavel||""))+row("Optante pelo Simples",sim(d.opcao_pelo_simples)+(d.data_opcao_pelo_simples?" desde "+fData(d.data_opcao_pelo_simples):""))+row("Excluída do Simples",fData(d.data_exclusao_do_simples))+row("Optante pelo MEI",sim(d.opcao_pelo_mei))+"</dl>")}
+  ${card("Endereço",`<dl>${row("Logradouro",esc(end))}${row("Localidade",esc(loc))}</dl><p class="noprint"><a href="${mapa}" target="_blank" rel="noopener">Abrir no Google Maps</a></p>`)}
+  ${card("Contato",'<dl>'+row("Telefones",tels)+row("Fax",fax)+row("E-mail",mail)+"</dl>")}
+  ${card("Atividades econômicas (CNAE)",cnae,true)}
+  ${card("Quadro societário",qsa,true)}
+  ${card("Regime tributário",reg,true)}
+  </div>`;
+  $("#cp").onclick=copiar;$("#js").onclick=exportar;$("#pr").onclick=()=>print();
+}
+function texto(d){
+  const L=[`${d.razao_social} (${fCnpj(d.cnpj)})`,`Situação: ${d.descricao_situacao_cadastral}`];
+  if(d.nome_fantasia)L.push("Nome fantasia: "+d.nome_fantasia);
+  L.push("Abertura: "+fData(d.data_inicio_atividade),"Natureza jurídica: "+(d.natureza_juridica||""),"Capital social: "+(d.capital_social!=null?fMoeda(d.capital_social):""));
+  L.push("Endereço: "+[d.logradouro,d.numero,d.complemento,d.bairro,d.municipio+"/"+d.uf,"CEP "+fCep(d.cep||"")].filter(Boolean).join(", "));
+  if(d.ddd_telefone_1)L.push("Telefone: "+fTel(d.ddd_telefone_1));
+  if(d.email)L.push("E-mail: "+d.email);
+  L.push("CNAE principal: "+d.cnae_fiscal+" - "+(d.cnae_fiscal_descricao||""));
+  (d.qsa||[]).forEach(s=>L.push("Sócio: "+s.nome_socio+" ("+s.qualificacao_socio+")"));
+  return L.join("\n");
+}
+async function copiar(){const b=$("#cp");try{await navigator.clipboard.writeText(texto(dados));b.textContent="Dados copiados"}catch(e){b.textContent="Não foi possível copiar"}setTimeout(()=>b.textContent="Copiar dados",2000)}
+function exportar(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(dados,null,2)],{type:"application/json"}));a.download="cnpj-"+dados.cnpj+".json";document.body.appendChild(a);a.click();a.remove()}
+addEventListener("beforeprint",()=>document.querySelectorAll("details.acc").forEach(x=>x.open=true));
+// Consulta
+async function consultar(c){
+  ultimo=c;go.disabled=true;skeleton();dados=null;
+  try{
+    const r=await fetch("https://brasilapi.com.br/api/cnpj/v1/"+c);
+    if(r.status===404)return erro("CNPJ não encontrado","Não há empresa cadastrada com esse número. Confira os dígitos e tente de novo.");
+    if(r.status===400)return erro("CNPJ recusado pela API","O número informado não é um CNPJ válido para a BrasilAPI.");
+    if(r.status===429)return erro("Muitas consultas em pouco tempo","Aguarde alguns segundos e tente novamente.",true);
+    if(!r.ok)return erro("Serviço indisponível","A BrasilAPI respondeu com erro "+r.status+". Tente novamente em instantes.",true);
+    dados=await r.json();mostrar(dados);
+  }catch(e){
+    erro("Sem conexão com a BrasilAPI","Verifique sua internet. Se esta página está aberta dentro do claude.ai, o navegador bloqueia consultas externas: baixe o arquivo index.html e abra no seu computador.",true);
+  }finally{go.disabled=false}
+}
+$("#f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const c=q.value.replace(/\D/g,""),m=valida(c);
+  q.setAttribute("aria-invalid",m?"true":"false");
+  if(m){dados=null;return erro("Confira o CNPJ",m)}
+  q.value="";consultar(c);
+});
+q.addEventListener("input",()=>q.setAttribute("aria-invalid","false"));
+</script>
+</body>
+</html>
